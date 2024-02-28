@@ -40,10 +40,46 @@ impl Default for Person {
 // If while parsing the age, something goes wrong, then return the default of
 // Person Otherwise, then return an instantiated Person object with the results
 
-// I AM NOT DONE
-
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
+        if s.is_empty() {
+            return Default::default();
+        }
+
+        s.split(",")
+            .map(|x| x.into())
+            .collect::<Vec<String>>()
+            .into()
+    }
+}
+
+impl From<Vec<String>> for Person {
+    fn from(value: Vec<String>) -> Self {
+        let name: String;
+        let age: usize;
+        match value.get(0) {
+            Some(str_name) => {
+                if str_name.is_empty() {
+                    return Default::default();
+                } else {
+                    name = str_name.to_string();
+                }
+            }
+            None => return Default::default(),
+        }
+
+        match value.get(1) {
+            Some(x) => {
+                if let Ok(parsed_age) = x.parse::<usize>() {
+                    age = parsed_age;
+                } else {
+                    return Default::default();
+                };
+            }
+            None => return Default::default(),
+        };
+
+        Person { age, name }
     }
 }
 
